@@ -1,0 +1,1 @@
+This React project uses AXIOS to get the rest api https://dummyjson.com/products -- Read detail docs from https://dummyjson.com/docs
