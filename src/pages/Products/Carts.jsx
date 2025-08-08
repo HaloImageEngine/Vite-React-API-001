@@ -1,77 +1,113 @@
-// src/pages/Carts.jsx
-
-import React, { useState, useEffect } from 'react';
-import {
-  Typography,
-  Container,
-  Box
-} from '@mui/material';
-import { DataGrid } from '@mui/x-data-grid';
-import axios from 'axios';
+// src/pages/Products/Carts.jsx
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { Container, Box, Typography, Divider, Button } from "@mui/material";
+import { DataGrid, GridToolbar } from "@mui/x-data-grid";
+import { Link } from "react-router-dom";
 
 export default function Carts() {
   const [carts, setCarts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [selectedCart, setSelectedCart] = useState(null);
 
   useEffect(() => {
-    axios.get('https://dummyjson.com/carts')
-      .then(res => setCarts(res.data.carts))
-      .catch(err => console.error(err));
+    setLoading(true);
+    axios
+      .get("https://dummyjson.com/carts")
+      .then((res) => setCarts(res.data?.carts ?? []))
+      .catch((err) => {
+        console.error(err);
+        setCarts([]);
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   const cartColumns = [
-    { field: 'id', headerName: 'Cart ID', width: 90 },
-    { field: 'userId', headerName: 'User ID', width: 90 },
-    { field: 'totalProducts', headerName: 'Total Products', width: 130 },
-    { field: 'totalQuantity', headerName: 'Total Quantity', width: 130 },
-    { field: 'total', headerName: 'Total ($)', width: 100 },
-    { field: 'discountedTotal', headerName: 'Discounted Total ($)', width: 160 }
+    {
+      field: "id",
+      headerName: "Cart ID",
+      type: "number",
+      width: 110,
+      renderCell: (params) => (
+        <Button
+          component={Link}
+          to={`/user-cart/${params?.row?.id}`}
+          variant="contained"
+          size="small"
+        >
+          {params?.row?.id}
+        </Button>
+      ),
+    },
+    { field: "userId", headerName: "User ID", type: "number", width: 110 },
+    { field: "totalProducts", headerName: "Products", type: "number", width: 120 },
+    { field: "totalQuantity", headerName: "Qty", type: "number", width: 100 },
+    { field: "total", headerName: "Total ($)", type: "number", width: 130 },
+    { field: "discountedTotal", headerName: "Discounted ($)", type: "number", width: 160 },
   ];
 
-  const productColumns = [
-    { field: 'id', headerName: 'Product ID', width: 90 },
-    { field: 'title', headerName: 'Title', width: 200 },
-    { field: 'price', headerName: 'Price', width: 100 },
-    { field: 'quantity', headerName: 'Quantity', width: 100 },
-    { field: 'total', headerName: 'Total', width: 100 },
-    { field: 'discountPercentage', headerName: 'Discount %', width: 120 },
-    { field: 'discountedPrice', headerName: 'Discounted Price', width: 150 }
+  const itemColumns = [
+    { field: "id", headerName: "Item ID", type: "number", width: 100 },
+    { field: "title", headerName: "Title", flex: 2, minWidth: 220 },
+    { field: "price", headerName: "Price", type: "number", width: 110 },
+    { field: "quantity", headerName: "Qty", type: "number", width: 100 },
+    { field: "total", headerName: "Total", type: "number", width: 110 },
+    { field: "discountPercentage", headerName: "Disc %", type: "number", width: 120 },
+    { field: "discountedPrice", headerName: "Disc Price", type: "number", width: 130 },
   ];
 
   return (
-    <Container>
+    <Container sx={{ py: 3 }}>
       <Typography variant="h4" gutterBottom>
-        Carts List
+        Carts
       </Typography>
 
-      {/* Master Grid: List of Carts */}
-      <Box sx={{ height: 500, width: '100%' }}>
+      {/* Master grid: carts */}
+      <Box sx={{ height: 600 }}>
         <DataGrid
-          rows={carts}
+          rows={carts ?? []}
           columns={cartColumns}
-          pageSize={10}
-          rowsPerPageOptions={[10]}
-          getRowId={(row) => row.id}
-          onRowClick={(params) => setSelectedCart(params.row)}
+          getRowId={(r) => r?.id}
+          loading={loading}
+          disableRowSelectionOnClick
+          onRowClick={(params) => setSelectedCart(params?.row ?? null)}
+          slots={{ toolbar: GridToolbar }}
+          slotProps={{
+            toolbar: { showQuickFilter: true, quickFilterProps: { debounceMs: 500 } },
+          }}
+          initialState={{
+            pagination: { paginationModel: { pageSize: 10, page: 0 } },
+            sorting: { sortModel: [{ field: "id", sort: "asc" }] },
+          }}
+          pageSizeOptions={[5, 10, 25, 50]}
         />
       </Box>
 
-      {/* Detail Grid: Cart Products */}
+      {/* Details grid: items in the selected cart */}
       {selectedCart && (
-        <Box sx={{ mt: 5 }}>
+        <>
+          <Divider sx={{ my: 3 }} />
           <Typography variant="h6" gutterBottom>
-            Cart #{selectedCart.id} — Product Details
+            Cart #{selectedCart.id} — Items
           </Typography>
-          <Box sx={{ height: 400, width: '100%' }}>
+          <Box sx={{ height: 560 }}>
             <DataGrid
-              rows={selectedCart.products}
-              columns={productColumns}
-              getRowId={(row) => row.id}
-              pageSize={5}
-              rowsPerPageOptions={[5]}
+              rows={selectedCart?.products ?? []}
+              columns={itemColumns}
+              getRowId={(r) => r?.id}
+              disableRowSelectionOnClick
+              slots={{ toolbar: GridToolbar }}
+              slotProps={{
+                toolbar: { showQuickFilter: true, quickFilterProps: { debounceMs: 500 } },
+              }}
+              initialState={{
+                pagination: { paginationModel: { pageSize: 10, page: 0 } },
+                sorting: { sortModel: [{ field: "title", sort: "asc" }] },
+              }}
+              pageSizeOptions={[5, 10, 25, 50]}
             />
           </Box>
-        </Box>
+        </>
       )}
     </Container>
   );
