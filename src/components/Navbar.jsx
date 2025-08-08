@@ -51,7 +51,7 @@ function Navbar() {
         Home
       </NavLink>
 
-      {/* Northwind Dropdown */}
+      {/* DummyJson Dropdown */}
       <div
         style={dropdownWrapper}
         onMouseEnter={(e) => e.currentTarget.querySelector('.dropdown-content').style.display = 'block'}
@@ -71,8 +71,14 @@ function Navbar() {
           <NavLink to="/products" style={({ isActive }) => isActive ? { ...linkItem, ...activeStyle } : linkItem}>
             Products
           </NavLink>
-           <NavLink to="/carts" style={({ isActive }) => isActive ? { ...linkItem, ...activeStyle } : linkItem}>
+          <NavLink to="/carts" style={({ isActive }) => isActive ? { ...linkItem, ...activeStyle } : linkItem}>
             Carts
+          </NavLink>
+          <NavLink to="/products-search" style={({ isActive }) => isActive ? { ...linkItem, ...activeStyle } : linkItem}>
+            ProductsSearch
+          </NavLink>
+          <NavLink to="/productdetail" style={({ isActive }) => isActive ? { ...linkItem, ...activeStyle } : linkItem}>
+            ProductDetail
           </NavLink>
         </div>
       </div>
