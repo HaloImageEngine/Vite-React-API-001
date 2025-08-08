@@ -1,11 +1,8 @@
-import React, { createContext, useContext, useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { ThemeProvider, createTheme, CssBaseline, useMediaQuery } from "@mui/material";
-
-const ColorModeContext = createContext({ mode: "light", toggleColorMode: () => {} });
-export const useColorMode = () => useContext(ColorModeContext);
+import { ColorModeContext } from "./colorModeContext";
 
 export default function ColorModeProvider({ children }) {
-  // If user has a saved preference, use it; else follow system
   const prefersDark = useMediaQuery("(prefers-color-scheme: dark)");
   const [mode, setMode] = useState("light");
 
@@ -30,17 +27,15 @@ export default function ColorModeProvider({ children }) {
   const theme = useMemo(
     () =>
       createTheme({
-        palette: {
-          mode,
-        },
+        palette: { mode },
       }),
     [mode]
   );
 
-  const ctx = useMemo(() => ({ mode, toggleColorMode }), [mode]);
+  const ctxValue = useMemo(() => ({ mode, toggleColorMode }), [mode]);
 
   return (
-    <ColorModeContext.Provider value={ctx}>
+    <ColorModeContext.Provider value={ctxValue}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
         {children}
