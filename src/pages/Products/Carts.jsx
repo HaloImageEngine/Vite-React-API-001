@@ -39,7 +39,22 @@ export default function Carts() {
         </Button>
       ),
     },
-    { field: "userId", headerName: "User ID", type: "number", width: 110 },
+    {
+      field: "userId",
+      headerName: "User ID",
+      type: "number",
+      width: 130,
+      renderCell: (params) => (
+        <Button
+          component={Link}
+          to={`/carts-by-user/${params?.row?.userId}`}
+          variant="outlined"
+          size="small"
+        >
+          {params?.row?.userId}
+        </Button>
+      ),
+    },
     { field: "totalProducts", headerName: "Products", type: "number", width: 120 },
     { field: "totalQuantity", headerName: "Qty", type: "number", width: 100 },
     { field: "total", headerName: "Total ($)", type: "number", width: 130 },

@@ -1,42 +1,58 @@
+// src/main.jsx
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import Layout from './components/Layout'; // <-- layout with Header/Navbar/Footer
-import Home from './pages/Home';
-import About from './pages/About';
-import Products from './pages/Products/Products';
+// Theme
+import ColorModeProvider from "./theme/ColorModeProvider";
+
+// Layout + shared
+import Layout from "./components/Layout";
+import NotFoundPage from "./pages/NotFoundPage";
+
+// Top-level pages
+import Home from "./pages/Home";
+import About from "./pages/About";
+
+// Products
+import Products from "./pages/Products/Products";
 import ProductsSearch from "./pages/Products/ProductsSearch";
 import ProductDetail from "./pages/Products/ProductDetail";
-import Carts from './pages/Products/Carts';
-import GetAllUsers from './pages/Users/GetAllUsers';
-import CartsByUsers from './pages/Users/CartsByUsers';
-import UserCartDetail from './pages/Users/UserCartDetail';
+import Carts from "./pages/Products/Carts";
 
-import NotFoundPage from './pages/NotFoundPage';
+// Users
+import GetAllUsers from "./pages/Users/GetAllUsers";
+import CartsByUsers from "./pages/Users/CartsByUsers";
+import UserCartDetail from "./pages/Users/UserCartDetail";
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: "/",
     element: <Layout />,
     errorElement: <NotFoundPage />,
     children: [
-      { index: true, element: <Home /> },           // renders at /
-      { path: 'home', element: <Home /> },          // renders at /home
-      { path: 'about', element: <About /> },        // renders at /about
-      { path: 'products', element: <Products /> },        // renders at /products
-      { path: 'products-search', element: <ProductsSearch /> },  // renders at ProductsSearch/
-      { path: 'product/:id', element: <ProductDetail /> },  // renders at ProductDetail/
-      { path: 'users', element: <GetAllUsers /> },                 // /users
-      { path: 'carts-by-user/:userId', element: <CartsByUsers /> },// /carts-by-user/1
-      { path: 'user-cart/:cartId', element: <UserCartDetail /> },  // /user-cart/1
-      { path: 'carts', element: <Carts /> },        // renders at /carts
-      
+      { index: true, element: <Home /> },
+      { path: "home", element: <Home /> },
+      { path: "about", element: <About /> },
+
+      // Products
+      { path: "products", element: <Products /> },
+      { path: "products-search", element: <ProductsSearch /> },
+      { path: "product/:id", element: <ProductDetail /> },
+      { path: "carts", element: <Carts /> },
+
+      // Users
+      { path: "users", element: <GetAllUsers /> },
+      { path: "carts-by-user/:userId", element: <CartsByUsers /> },
+      { path: "user-cart/:cartId", element: <UserCartDetail /> },
     ],
-  }
+  },
 ]);
-ReactDOM.createRoot(document.getElementById('root')).render(
+
+ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <ColorModeProvider>
+      <RouterProvider router={router} />
+    </ColorModeProvider>
   </React.StrictMode>
 );
