@@ -9,9 +9,7 @@ function Navbar() {
     fontWeight: 'bold'
   };
 
-  const activeStyle = {
-    color: '#007BFF'
-  };
+  const activeStyle = { color: '#007BFF' };
 
   const dropdownWrapper = {
     position: 'relative',
@@ -32,10 +30,7 @@ function Navbar() {
     flexDirection: 'column'
   };
 
-  const navContainer = {
-    padding: '1rem',
-    backgroundColor: '#eaeaea'
-  };
+  const navContainer = { padding: '1rem', backgroundColor: '#eaeaea' };
 
   const linkItem = {
     display: 'block',
@@ -47,46 +42,69 @@ function Navbar() {
   return (
     <nav style={navContainer}>
       {/* Home */}
-      <NavLink to="/" style={({ isActive }) => isActive ? { ...baseStyle, ...activeStyle } : baseStyle} end>
+      <NavLink to="/" style={({ isActive }) => (isActive ? { ...baseStyle, ...activeStyle } : baseStyle)} end>
         Home
       </NavLink>
 
-      {/* DummyJson Dropdown */}
+      {/* Products Dropdown */}
       <div
         style={dropdownWrapper}
-        onMouseEnter={(e) => e.currentTarget.querySelector('.dropdown-content').style.display = 'block'}
-        onMouseLeave={(e) => e.currentTarget.querySelector('.dropdown-content').style.display = 'none'}
-      >
-        
-      </div>
-
-       {/* Products Dropdown */}
-      <div
-        style={dropdownWrapper}
-        onMouseEnter={(e) => e.currentTarget.querySelector('.dropdown-content').style.display = 'block'}
-        onMouseLeave={(e) => e.currentTarget.querySelector('.dropdown-content').style.display = 'none'}
+        onMouseEnter={(e) => (e.currentTarget.querySelector('.dropdown-content').style.display = 'block')}
+        onMouseLeave={(e) => (e.currentTarget.querySelector('.dropdown-content').style.display = 'none')}
       >
         <span style={{ ...baseStyle, cursor: 'pointer' }}>Products ▾</span>
         <div className="dropdown-content" style={{ ...dropdownContent }}>
-          <NavLink to="/products" style={({ isActive }) => isActive ? { ...linkItem, ...activeStyle } : linkItem}>
+          <NavLink to="/products" style={({ isActive }) => (isActive ? { ...linkItem, ...activeStyle } : linkItem)}>
             Products
           </NavLink>
-          <NavLink to="/carts" style={({ isActive }) => isActive ? { ...linkItem, ...activeStyle } : linkItem}>
+          <NavLink to="/carts" style={({ isActive }) => (isActive ? { ...linkItem, ...activeStyle } : linkItem)}>
             Carts
           </NavLink>
-          <NavLink to="/products-search" style={({ isActive }) => isActive ? { ...linkItem, ...activeStyle } : linkItem}>
-            ProductsSearch
-          </NavLink>
-          <NavLink to="/productdetail" style={({ isActive }) => isActive ? { ...linkItem, ...activeStyle } : linkItem}>
-            ProductDetail
+          <NavLink to="/products-search" style={({ isActive }) => (isActive ? { ...linkItem, ...activeStyle } : linkItem)}>
+            Products Search
           </NavLink>
         </div>
       </div>
 
+      {/* Users Dropdown — FIXED WRAPPER */}
+      <div
+        style={dropdownWrapper}
+        onMouseEnter={(e) => (e.currentTarget.querySelector('.dropdown-content').style.display = 'block')}
+        onMouseLeave={(e) => (e.currentTarget.querySelector('.dropdown-content').style.display = 'none')}
+      >
+        <span style={{ ...baseStyle, cursor: 'pointer' }}>Users ▾</span>
+        <div className="dropdown-content" style={{ ...dropdownContent }}>
+          <NavLink to="/users" style={({ isActive }) => (isActive ? { ...linkItem, ...activeStyle } : linkItem)}>
+            Get All Users
+          </NavLink>
+          {/* Optional dev/test links for param routes */}
+          <NavLink to="/carts-by-user/1" style={({ isActive }) => (isActive ? { ...linkItem, ...activeStyle } : linkItem)}>
+            Carts by User (ex: #1)
+          </NavLink>
+          <NavLink to="/user-cart/1" style={({ isActive }) => (isActive ? { ...linkItem, ...activeStyle } : linkItem)}>
+            User Cart Detail (ex: #1)
+          </NavLink>
+        </div>
+      </div>
 
-
-      {/* Examples Dropdown (Vertical Stack) */}
-      
+      {/* External Link Dropdown */}
+      <div
+        style={dropdownWrapper}
+        onMouseEnter={(e) => (e.currentTarget.querySelector('.dropdown-content').style.display = 'block')}
+        onMouseLeave={(e) => (e.currentTarget.querySelector('.dropdown-content').style.display = 'none')}
+      >
+        <span style={{ ...baseStyle, cursor: 'pointer' }}>External ▾</span>
+        <div className="dropdown-content" style={{ ...dropdownContent }}>
+          <a
+            href="https://dummyjson.com/docs"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={linkItem}
+          >
+            DummyJSON Docs
+          </a>
+        </div>
+      </div>
     </nav>
   );
 }

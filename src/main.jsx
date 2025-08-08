@@ -9,6 +9,10 @@ import Products from './pages/Products/Products';
 import ProductsSearch from "./pages/Products/ProductsSearch";
 import ProductDetail from "./pages/Products/ProductDetail";
 import Carts from './pages/Products/Carts';
+import GetAllUsers from './pages/Users/GetAllUsers';
+import CartsByUsers from './pages/Users/CartsByUsers';
+import UserCartDetail from './pages/Users/UserCartDetail';
+
 import NotFoundPage from './pages/NotFoundPage';
 
 const router = createBrowserRouter([
@@ -23,6 +27,9 @@ const router = createBrowserRouter([
       { path: 'products', element: <Products /> },        // renders at /products
       { path: 'products-search', element: <ProductsSearch /> },  // renders at ProductsSearch/
       { path: 'product/:id', element: <ProductDetail /> },  // renders at ProductDetail/
+      { path: 'users', element: <GetAllUsers /> },                 // /users
+      { path: 'carts-by-user/:userId', element: <CartsByUsers /> },// /carts-by-user/1
+      { path: 'user-cart/:cartId', element: <UserCartDetail /> },  // /user-cart/1
       { path: 'carts', element: <Carts /> },        // renders at /carts
       
     ],
