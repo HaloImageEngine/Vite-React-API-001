@@ -101,6 +101,12 @@ function Navbar() {
             >
               Products Search
             </NavLink>
+            <NavLink
+              to="/carts-by-user/1"
+              style={({ isActive }) => (isActive ? { ...linkItem, ...activeStyle } : linkItem)}
+            >
+              Carts by User (ex: #1)
+            </NavLink>
           </div>
         </div>
 
