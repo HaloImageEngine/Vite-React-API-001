@@ -2,17 +2,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import {
-    Box,
-    Container,
-    Typography,
-    Card,
-    CardContent,
-    Grid,
-    Avatar,
-    Button,
-    Alert,
-    Skeleton,
-    Stack,
+    Box, Container, Typography, Card, CardContent, Grid,
+    Avatar, Button, Alert, Skeleton, Stack,
 } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import axios from "axios";
@@ -35,7 +26,7 @@ export default function CartsByUserGridUtility() {
                 const cartsRaw = Array.isArray(cartsRes.data?.carts) ? cartsRes.data.carts : [];
                 const carts = cartsRaw.filter(Boolean);
 
-                // 2) Fetch users for those carts
+                // 2) Fetch users for those carts (deduped)
                 const uniqueUserIds = [...new Set(carts.map((c) => c.userId))].filter(
                     (id) => id !== null && id !== undefined
                 );
@@ -48,19 +39,32 @@ export default function CartsByUserGridUtility() {
                     if (u?.id) map.set(u.id, u);
                 });
 
-                // 3) Normalize carts with parsed date and **materialized userName**
+                // 3) Normalize carts; add userName and a deterministic date if none from API
                 const normalized = carts.map((c) => {
                     const rawDate = c?.date ?? null;
-                    const parsedDate = rawDate ? new Date(rawDate) : null;
+                    let parsedDate = rawDate ? new Date(rawDate) : null;
+
+                    // DummyJSON carts usually have no date. Make a stable, deterministic one for display/sort.
+                    if (!parsedDate || isNaN(parsedDate.getTime())) {
+                        const base = new Date(2024, 0, 1).getTime(); // Jan 1, 2024 local
+                        const dayMs = 24 * 60 * 60 * 1000;
+                        const hourMs = 60 * 60 * 1000;
+                        // Spread carts across the year deterministically by id and userId
+                        const synthetic =
+                            base + ((c.id ?? 0) % 365) * dayMs + ((c.userId ?? 0) % 24) * hourMs;
+                        parsedDate = new Date(synthetic);
+                    }
 
                     const u = c?.userId != null ? map.get(c.userId) : null;
-                    const userName = u ? `${u.firstName} ${u.lastName}` : (c?.userId != null ? `User #${c.userId}` : "");
+                    const userName = u
+                        ? `${u.firstName} ${u.lastName}`
+                        : (c?.userId != null ? `User #${c.userId}` : "");
 
                     return {
                         ...c,
                         _rawDate: rawDate,
                         _parsedDate: parsedDate,
-                        userName,       // <--- concrete string field for filtering/sorting
+                        userName,
                     };
                 });
 
@@ -109,13 +113,13 @@ export default function CartsByUserGridUtility() {
                 },
             },
             {
-                field: "userName",            // <--- use the real field, not a valueGetter
+                field: "userName",
                 headerName: "User",
                 type: "string",
                 flex: 1,
                 minWidth: 240,
-                sortable: true,               // now sortable by the string field
-                filterable: true,             // built-in "contains" works
+                sortable: true,
+                filterable: true,
                 renderCell: (params) => {
                     const uid = params?.row?.userId;
                     const user = uid != null ? usersById.get(uid) : null;
@@ -133,10 +137,10 @@ export default function CartsByUserGridUtility() {
             {
                 field: "_parsedDate",
                 headerName: "Date",
-                width: 170,
+                width: 180,
                 type: "dateTime",
                 valueGetter: (params) => params?.row?._parsedDate ?? null,
-                valueFormatter: (params) =>
+                renderCell: (params) =>
                     params?.value
                         ? new Intl.DateTimeFormat(undefined, {
                             year: "numeric",
@@ -159,15 +163,21 @@ export default function CartsByUserGridUtility() {
                 field: "total",
                 headerName: "Total",
                 type: "number",
-                width: 120,
-                valueFormatter: (params) => currency(params?.value),
+                width: 130,
+                align: "right",
+                headerAlign: "right",
+                renderCell: (params) => currency(params?.row?.total),
+                sortable: true,
             },
             {
                 field: "discountedTotal",
                 headerName: "Discounted",
                 type: "number",
                 width: 140,
-                valueFormatter: (params) => currency(params?.value),
+                align: "right",
+                headerAlign: "right",
+                renderCell: (params) => currency(params?.row?.discountedTotal),
+                sortable: true,
             },
         ],
         [usersById]
@@ -218,12 +228,8 @@ export default function CartsByUserGridUtility() {
                         toolbar: { showQuickFilter: true, quickFilterProps: { debounceMs: 500 } },
                     }}
                     initialState={{
-                        sorting: {
-                            sortModel: [{ field: "_parsedDate", sort: "desc" }], // date desc by default
-                        },
+                        sorting: { sortModel: [{ field: "_parsedDate", sort: "desc" }] },
                         pagination: { paginationModel: { pageSize: 10, page: 0 } },
-                        // Optional: add a default filter model example
-                        // filter: { filterModel: { items: [{ field: 'userName', operator: 'contains', value: '' }] } }
                     }}
                     pageSizeOptions={[5, 10, 25, 50, 100]}
                 />
