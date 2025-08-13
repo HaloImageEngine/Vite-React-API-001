@@ -25,34 +25,43 @@ import GetAllUsers from "./pages/Users/GetAllUsers";
 import CartsByUsers from "./pages/Users/CartsByUsers";
 import UserCartDetail from "./pages/Users/UserCartDetail";
 
+// NEW: Utility grid (all carts with user info, sortable)
+import CartsByUserGridUtility from "./pages/Users/CartsByUserGridUtility"; // <- adjust path if you placed it elsewhere
+// NEW: Fresh cart details page
+import CartsDetails from "./pages/Products/CartsDetails"; // <- adjust path if you placed it elsewhere
+
 const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Layout />,
-    errorElement: <NotFoundPage />,
-    children: [
-      { index: true, element: <Home /> },
-      { path: "home", element: <Home /> },
-      { path: "about", element: <About /> },
+    {
+        path: "/",
+        element: <Layout />,
+        errorElement: <NotFoundPage />,
+        children: [
+            { index: true, element: <Home /> },
+            { path: "home", element: <Home /> },
+            { path: "about", element: <About /> },
 
-      // Products
-      { path: "products", element: <Products /> },
-      { path: "products-search", element: <ProductsSearch /> },
-      { path: "product/:id", element: <ProductDetail /> },
-      { path: "carts", element: <Carts /> },
+            // Products
+            { path: "products", element: <Products /> },
+            { path: "products-search", element: <ProductsSearch /> },
+            { path: "product/:id", element: <ProductDetail /> }, // keep this for ProductDetail.jsx
+            { path: "carts", element: <Carts /> },
 
-      // Users
-      { path: "users", element: <GetAllUsers /> },
-      { path: "carts-by-user/:userId", element: <CartsByUsers /> },
-      { path: "user-cart/:cartId", element: <UserCartDetail /> },
-    ],
-  },
+            // Users
+            { path: "users", element: <GetAllUsers /> },
+            { path: "carts-by-user/:userId", element: <CartsByUsers /> },
+            { path: "user-cart/:cartId", element: <UserCartDetail /> },
+
+            // NEW routes
+            { path: "carts-utility", element: <CartsByUserGridUtility /> },
+            { path: "cart/:cartId", element: <CartsDetails /> },
+        ],
+    },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <ColorModeProvider>
-      <RouterProvider router={router} />
-    </ColorModeProvider>
-  </React.StrictMode>
+    <React.StrictMode>
+        <ColorModeProvider>
+            <RouterProvider router={router} />
+        </ColorModeProvider>
+    </React.StrictMode>
 );
